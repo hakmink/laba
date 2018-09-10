@@ -48,7 +48,7 @@ def predict(rnn, input_surname, n_predictions=3):
             value = topv[0][i].item()
             category_index = topi[0][i].item()
             predictions.append([value, category_index])
-        return json.dumps(predictions)    
+        return predictions 
 
 def load_model():
     return torch.load('data/model/rnn.pickle')
