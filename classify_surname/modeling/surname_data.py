@@ -1,4 +1,4 @@
-import surname_common as sc
+import modeling.surname_common as sc
 from sklearn.utils import shuffle
 import glob
 import os
@@ -15,7 +15,7 @@ def unicode_to_ascii(s):
         if unicodedata.category(c) != 'Mn' and c in sc.ALL_LETTERS
     )
 
-def load_surnames():
+def load_surnames_from_txt():
     df_surnames = pd.DataFrame()
     list_ = []
 
@@ -38,7 +38,7 @@ def load_surnames():
     return df_surnames, df_categories
 
 def save_df_surnames_as_pickle():
-    df_surnames, df_categories = load_surnames()
+    df_surnames, df_categories = load_surnames_from_txt()
     # train test split
     df = shuffle(df_surnames, random_state=sc.RANDOM_STATE)
     train_cnt = int(df['surname'].count()*sc.TRAIN_TEST_RATIO)
@@ -58,3 +58,13 @@ def save_df_surnames_as_pickle():
     tt['ratio'] = tt['surname_train'] / (tt['surname_train'] + tt['surname_test'])
     tt.to_pickle('data/pickles/train_test_stat.pickle',compression='bz2')
     return tt
+
+
+def load_df_surnames():
+    df_train = pd.read_pickle('data/pickles/train.pickle',compression='bz2')
+    df_test = pd.read_pickle('data/pickles/test.pickle',compression='bz2')
+    
+    return df_train, df_test
+
+def load_df_categories():
+    return pd.read_pickle('data/pickles/df_categories.pickle',compression='bz2')
