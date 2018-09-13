@@ -2,8 +2,10 @@ import modeling.surname_common as sc
 import torch.nn as nn
 import torch
 import json
+import pprint
 
 
+criterion = nn.NLLLoss()
 LEARNING_RATE = 0.005
 
 class RNN(nn.Module):
@@ -25,6 +27,25 @@ class RNN(nn.Module):
 
     def initHidden(self):
         return torch.zeros(1, self.hidden_size)
+
+    
+def train(rnn, category_tensor, surname_tensor):
+    hidden = rnn.initHidden()
+
+    rnn.zero_grad()
+
+    for i in range(surname_tensor.size()[0]):
+        output, hidden = rnn(surname_tensor[i], hidden)
+
+    loss = criterion(output, category_tensor)
+    loss.backward()
+
+    # Add parameters' gradients to their values, multiplied by learning rate
+    for p in rnn.parameters():
+        p.data.add_(-LEARNING_RATE, p.grad.data)
+
+    return output, loss.item()  
+    
     
 
 def evaluate(rnn, line_tensor):
